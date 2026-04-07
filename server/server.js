@@ -22,11 +22,13 @@ connectDB();
 // Security & Middleware
 app.use(helmet());
 app.use(cors({
-    origin: [
-      'http://localhost:5173',
-      'https://grocery-stock-six.vercel.app',
-      process.env.CLIENT_URL, // Ensure this is set in Vercel Settings
-    ].filter(Boolean), // Filters out undefined values
+    origin: function (origin, callback) {
+        if (!origin || origin.startsWith('http://localhost') || origin.endsWith('.vercel.app') || origin === process.env.CLIENT_URL) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
