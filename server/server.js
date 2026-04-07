@@ -24,7 +24,7 @@ app.use(helmet());
 app.use(cors({
     origin: [
       'http://localhost:5173',
-      'http://localhost:3000',
+      'https://grocery-stock-six.vercel.app',
       process.env.CLIENT_URL, // Ensure this is set in Vercel Settings
     ].filter(Boolean), // Filters out undefined values
     credentials: true,
