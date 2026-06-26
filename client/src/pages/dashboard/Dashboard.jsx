@@ -1,47 +1,43 @@
-import { useEffect, useState } from 'react'
-import { Package, Tag, Truck, AlertTriangle, ArrowUpDown, TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
+import useDashboard from '../../hooks/useDashboard'
+import { Package, Tag, Truck, AlertTriangle, ArrowUpDown, TrendingUp, TrendingDown } from 'lucide-react'
 import StatCard from '../../components/UI/StatCard'
-import Loader from '../../components/UI/Loader'
-import { getProducts, getLowStockProducts } from '../../api/productApi'
-import { getCategories } from '../../api/categoryApi'
-import { getSuppliers } from '../../api/supplierApi'
-import { getTransactions } from '../../api/inventoryApi'
-import { formatCurrency, formatDateTime, getStockStatus } from '../../utils/helpers'
+import SkeletonCard from '../../components/UI/SkeletonCard'
+import { formatDateTime, getStockStatus } from '../../utils/helpers'
 
 const Dashboard = () => {
-  const [stats, setStats] = useState(null)
-  const [lowStock, setLowStock] = useState([])
-  const [recentTx, setRecentTx] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { data, loading, error } = useDashboard()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [prodRes, catRes, supRes, txRes, lowRes] = await Promise.all([
-          getProducts({ limit: 1 }),
-          getCategories({ limit: 1 }),
-          getSuppliers({ limit: 1 }),
-          getTransactions({ limit: 6 }),
-          getLowStockProducts(),
-        ])
-        setStats({
-          totalProducts: prodRes.data.total,
-          categories: catRes.data.total,
-          suppliers: supRes.data.total,
-          lowStock: lowRes.data.total,
-        })
-        setLowStock(lowRes.data.data.slice(0, 5))
-        setRecentTx(txRes.data.data)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [])
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-fade-in py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <SkeletonCard className="h-72" />
+          <SkeletonCard className="h-72" />
+        </div>
+      </div>
+    )
+  }
 
-  if (loading) return <div className="flex justify-center py-20"><Loader size="lg" /></div>
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="rounded-3xl border border-red-700/50 bg-red-950/70 p-8 text-center">
+          <p className="text-red-300 text-xl font-semibold">{error}</p>
+          <p className="text-gray-400 mt-2">Please refresh or contact admin if this persists.</p>
+        </div>
+      </div>
+    )
+  }
+
+  const stats = data?.statistics || {}
+  const lowStock = data?.lowStockProducts || []
+  const recentTx = data?.recentInventory || []
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -53,9 +49,9 @@ const Dashboard = () => {
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard title="Total Products" value={stats?.totalProducts || 0} subtitle="Across all categories" icon={Package} gradient="gradient-green" />
-        <StatCard title="Categories" value={stats?.categories || 0} subtitle="Product groups" icon={Tag} gradient="gradient-blue" />
-        <StatCard title="Suppliers" value={stats?.suppliers || 0} subtitle="Active vendors" icon={Truck} gradient="gradient-purple" />
-        <StatCard title="Low Stock Alerts" value={stats?.lowStock || 0} subtitle="Need restocking" icon={AlertTriangle} gradient="gradient-orange" />
+        <StatCard title="Total Categories" value={stats?.totalCategories || 0} subtitle="Category count" icon={Tag} gradient="gradient-blue" />
+        <StatCard title="Total Suppliers" value={stats?.totalSuppliers || 0} subtitle="Active vendors" icon={Truck} gradient="gradient-purple" />
+        <StatCard title="Low Stock" value={stats?.lowStockCount || 0} subtitle="Need restocking" icon={AlertTriangle} gradient="gradient-orange" />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

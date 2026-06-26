@@ -1,4 +1,5 @@
 const Category = require('../models/categoryModel');
+const { invalidateDashboardCache } = require('../services/dashboardService');
 
 // @desc    Get all categories
 // @route   GET /api/categories
@@ -51,6 +52,7 @@ const getCategory = async (req, res, next) => {
 const createCategory = async (req, res, next) => {
   try {
     const category = await Category.create({ ...req.body, createdBy: req.user._id });
+    await invalidateDashboardCache();
     res.status(201).json({ success: true, message: 'Category created', data: category });
   } catch (error) {
     next(error);
@@ -69,6 +71,7 @@ const updateCategory = async (req, res, next) => {
     if (!category) {
       return res.status(404).json({ success: false, message: 'Category not found' });
     }
+    await invalidateDashboardCache();
     res.json({ success: true, message: 'Category updated', data: category });
   } catch (error) {
     next(error);
@@ -84,6 +87,7 @@ const deleteCategory = async (req, res, next) => {
     if (!category) {
       return res.status(404).json({ success: false, message: 'Category not found' });
     }
+    await invalidateDashboardCache();
     res.json({ success: true, message: 'Category deleted' });
   } catch (error) {
     next(error);

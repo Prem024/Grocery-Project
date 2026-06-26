@@ -91,7 +91,7 @@ const Login = () => {
           <div className="mt-6 pt-5 border-t border-gray-800">
             <p className="text-xs text-gray-500 text-center">Default credentials for demo:</p>
             <p className="text-xs text-gray-400 text-center mt-1">
-              <span className="text-primary-400">admin@grocery.com</span> / <span className="text-primary-400">admin123</span>
+              {/* <span className="text-primary-400">admin@grocery.com</span> / <span className="text-primary-400">prem123</span> */}
             </p>
           </div>
         </div>

@@ -1,4 +1,6 @@
 const Product = require('../models/productModel');
+const { invalidateDashboardCache } = require('../services/dashboardService');
+const productService = require('../services/productService');
 
 // @desc    Get all products with search, filter, pagination
 // @route   GET /api/products
@@ -82,6 +84,7 @@ const createProduct = async (req, res, next) => {
       { path: 'category', select: 'name' },
       { path: 'supplier', select: 'name' },
     ]);
+    await invalidateDashboardCache();
     res.status(201).json({ success: true, message: 'Product created', data: populated });
   } catch (error) {
     next(error);
@@ -103,6 +106,7 @@ const updateProduct = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
+    await invalidateDashboardCache();
     res.json({ success: true, message: 'Product updated', data: product });
   } catch (error) {
     next(error);
@@ -118,6 +122,7 @@ const deleteProduct = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
+    await invalidateDashboardCache();
     res.json({ success: true, message: 'Product deleted' });
   } catch (error) {
     next(error);
@@ -142,4 +147,28 @@ const getLowStockProducts = async (req, res, next) => {
   }
 };
 
-module.exports = { getProducts, getProduct, createProduct, updateProduct, deleteProduct, getLowStockProducts };
+// @desc    Initialize Product Page with products, categories, suppliers, and statistics
+// @route   GET /api/products/init
+// @access  Private
+const getProductInit = async (req, res, next) => {
+  try {
+    const data = await productService.initializeProductPage(req.query);
+    res.status(200).json({
+      success: true,
+      message: 'Product page initialized successfully',
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getProducts,
+  getProduct,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getLowStockProducts,
+  getProductInit,
+};

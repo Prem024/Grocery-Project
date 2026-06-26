@@ -1,4 +1,5 @@
 const Supplier = require('../models/supplierModel');
+const { invalidateDashboardCache } = require('../services/dashboardService');
 
 // @desc    Get all suppliers
 // @route   GET /api/suppliers
@@ -50,6 +51,7 @@ const getSupplier = async (req, res, next) => {
 const createSupplier = async (req, res, next) => {
   try {
     const supplier = await Supplier.create({ ...req.body, createdBy: req.user._id });
+    await invalidateDashboardCache();
     res.status(201).json({ success: true, message: 'Supplier created', data: supplier });
   } catch (error) {
     next(error);
@@ -68,6 +70,7 @@ const updateSupplier = async (req, res, next) => {
     if (!supplier) {
       return res.status(404).json({ success: false, message: 'Supplier not found' });
     }
+    await invalidateDashboardCache();
     res.json({ success: true, message: 'Supplier updated', data: supplier });
   } catch (error) {
     next(error);
@@ -83,6 +86,7 @@ const deleteSupplier = async (req, res, next) => {
     if (!supplier) {
       return res.status(404).json({ success: false, message: 'Supplier not found' });
     }
+    await invalidateDashboardCache();
     res.json({ success: true, message: 'Supplier deleted' });
   } catch (error) {
     next(error);

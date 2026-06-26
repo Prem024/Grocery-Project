@@ -19,11 +19,11 @@ const seed = async () => {
     // Create admin user
     const admin = await User.create({
       name: 'Admin User',
-      email: 'admin@grocery.com',
-      password: 'admin123',
+      email: 'prem@gmail.com',
+      password: 'prem123',
       role: 'admin',
     });
-    console.log('✅ Admin user created: admin@grocery.com / admin123');
+    console.log('✅ Admin user created: prem@gmail.com / prem123');
 
     // Create categories
     const categories = await Category.insertMany([
@@ -61,7 +61,7 @@ const seed = async () => {
     console.log('✅ Products seeded (including low-stock items)');
 
     console.log('\n🎉 Database seeded successfully!');
-    console.log('👉 Login: admin@grocery.com / admin123');
+    console.log('👉 Login: prem@gmail.com / prem123');
     process.exit(0);
   } catch (error) {
     console.error('❌ Seed error:', error.message);

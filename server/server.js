@@ -12,6 +12,7 @@ const supplierRoutes = require('./routes/supplierRoutes');
 const productRoutes = require('./routes/productRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -55,6 +56,7 @@ app.use('/api/suppliers', supplierRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Error handling
 app.use(notFound);

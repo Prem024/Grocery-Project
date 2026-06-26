@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify'
 import Layout from './components/Layout/Layout'
 import Login from './pages/auth/Login'
 import Dashboard from './pages/dashboard/Dashboard'
-import Products from './pages/products/Products'
+import ProductPage from './pages/products/ProductPage'
 import Categories from './pages/categories/Categories'
 import Suppliers from './pages/suppliers/Suppliers'
 import Inventory from './pages/inventory/Inventory'
@@ -29,7 +29,7 @@ const App = () => {
           }
         >
           <Route index element={<Dashboard />} />
-          <Route path="products" element={<Products />} />
+          <Route path="products" element={<ProductPage />} />
           <Route path="categories" element={<Categories />} />
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="inventory" element={<Inventory />} />

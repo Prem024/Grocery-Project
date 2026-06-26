@@ -1,5 +1,6 @@
 const Inventory = require('../models/inventoryModel');
 const Product = require('../models/productModel');
+const { invalidateDashboardCache } = require('../services/dashboardService');
 
 // @desc    Get all inventory transactions
 // @route   GET /api/inventory
@@ -72,6 +73,7 @@ const createTransaction = async (req, res, next) => {
       { path: 'performedBy', select: 'name' },
     ]);
 
+    await invalidateDashboardCache();
     res.status(201).json({
       success: true,
       message: `Stock ${type === 'in' ? 'added' : 'removed'} successfully`,
